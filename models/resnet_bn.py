@@ -74,10 +74,8 @@ class ResNet(nn.Module):
         self.l2_norm = l2_norm
         self.in_planes = 64
 
-        #self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
-        #                       stride=1, padding=1, bias=False)
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3,
-                               stride=2, padding=1, bias=False)
+                               stride=1, padding=1, bias=False)
         self.bn1 = nn.GroupNorm(2, 64)
         self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
@@ -106,6 +104,11 @@ class ResNet(nn.Module):
         out = F.adaptive_avg_pool2d(out, 1)
         out = out.view(out.size(0), -1)
         if self.l2_norm:
+            # with torch.no_grad():
+            # w = self.linear.weight.data.clone()
+            # w = F.normalize(w, dim=1, p=2)
+            # self.linear.weight.copy_(w)
+            # self.linear = F.normalize(self.linear)
             self.linear.weight.data = F.normalize(self.linear.weight.data, p=2, dim=1)
             out = F.normalize(out, dim=1)
             logit = self.linear(out)

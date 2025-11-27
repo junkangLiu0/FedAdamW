@@ -1,347 +1,151 @@
-# FedAdamW
-# Federated Learning Framework README
+# FedMuon
 
-This repository contains two main federated learning scripts: `new_adamw.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
+# FedMuon: Accelerating Federated Learning with Matrix Orthogonalization
+
+This repository provides the official implementation of the paper
+**“FedMuon: Accelerating Federated Learning with Matrix Orthogonalization”**,
+which introduces a communication-efficient and fast-converging federated learning framework that incorporates **orthogonalized updates** for local models and **matrix-based momentum aggregation** on the server.
 
 ---
 
-## Quick Start
+## 🌟 Key Features
 
-### 1. CNN Training (CIFAR-100)
+* **Matrix Orthogonalization**: Prevents gradient interference between clients by orthogonalizing parameter updates.
+* **Accelerated Convergence**: Combines momentum aggregation with block-wise orthogonal projections to stabilize updates.
+* **Communication-Efficient**: Reduces redundant information transmission in cross-device federated settings.
+* **Flexible Framework**: Built on **Ray (v1.0.0)** for scalable client–server simulations.
+* **Extensible Design**: Supports multiple optimization methods including `FedMuon`, `FedAvg`, `FedAdam`, and `FedMomentum`.
+
+---
+
+## 🛠 Environment Setup
+
+### Requirements
+
+* Python ≥ 3.8
+* [Ray 1.0.0](https://docs.ray.io/en/releases-1.0.0/)
+* PyTorch ≥ 1.10
+* torchvision
+* numpy
+* matplotlib
+* tensorboardX
+
+Install dependencies:
+
 ```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.01 \
-  --epoch 101 \
-  --extname FedAvg_adamw_P \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN swin_tiny \
-  --E 5 \
-  --batch_size 16 \
-  --gpu 2 \
-  --p 1 \
-  --num_gpus_per 0.2 \
-  --normalization BN \
-  --selection 0.05 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --rho 0.01 \
-  --pix 224 \
-  --lora 0 \
-  --K 50
+pip install torch torchvision ray==1.0.0 numpy matplotlib tensorboardX
 ```
 
-### 2. CNN Training (ResNet-18)
+---
+
+## 📂 Dataset Preparation
+
+The code automatically downloads the dataset if it’s not found locally.
+Supported datasets:
+
+* **MNIST**
+* **EMNIST**
+* **CIFAR-10**
+* **CIFAR-100**
+
+You can also manually place datasets in the `./data/` directory.
+
+---
+
+## 🚀 Quick Start
+
+### Run FedMuon on CIFAR-100
+
 ```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.001 \
-  --epoch 301 \
-  --extname FedAvg_adamw_P \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN resnet18 \
-  --E 5 \
-  --batch_size 50 \
-  --gpu 1 \
-  --p 1 \
-  --num_gpus_per 0.1 \
-  --normalization BN \
-  --selection 0.1 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --rho 0.01 \
-  --pix 32 \
-  --lora 0 \
-  --K 50
+python  main_FedMuon.py --alg FedMuon --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.5  --CNN   deit_tiny --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10 --beta1 0.9 --beta2 0.999 --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedMuon.py --alg Local_Muon --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.5  --CNN   deit_tiny --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10 --beta1 0.9 --beta2 0.999 --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedMuon.py --alg FedAvg --lr 1e-1 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.5  --CNN   deit_tiny --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10 --beta1 0.9 --beta2 0.999 --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedMuon.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.5  --CNN   deit_tiny --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10 --beta1 0.9 --beta2 0.999 --rho 0.01 --pix 32 --lora 0 --K 50
+
 ```
 
-### 3. Vision Transformer Training
-```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.001 \
-  --epoch 301 \
-  --extname FedAvg_adamw_P \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN deit_tiny \
-  --E 5 \
-  --batch_size 50 \
-  --gpu 2 \
-  --p 1 \
-  --num_gpus_per 0.1 \
-  --normalization BN \
-  --selection 0.1 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --rho 0.01 \
-  --pix 32 \
-  --lora 0 \
-  --K 50
-```
+### Run FedAvg for Comparison
+
+
 
 ---
 
-## Parameter Reference
+## ⚙️ Argument Overview
 
-### Core Federated Learning Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--alg` | Algorithm choice: `FedAvg`, `FedAdamW`, `FedCM`, `SCAFFOLD`, etc. |
-| `--lr` | Client learning rate |
-| `--lr_decay` | Learning rate decay strategy (1=exponential, 2=cosine annealing) |
-| `--gamma` | Momentum parameter for certain algorithms |
-| `--alpha` | Weight decay coefficient for AdamW optimizer |
-
-### Data Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--data_name` | Dataset: `CIFAR10`, `CIFAR100`, `imagenet`, `QQP`, `MNLI`, etc. |
-| `--alpha_value` | Dirichlet distribution parameter for non-IID data splitting (0.1=highly non-IID, 1=IID) |
-| `--num_workers` | Total number of clients |
-| `--selection` | Fraction of clients selected per round (0.1=10%) |
-
-### Model Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--CNN` | Model architecture: `resnet18`, `swin_tiny`, `deit_tiny`, `roberta_base` |
-| `--pre` | Use pretrained weights (1=True, 0=False) |
-| `--normalization` | Normalization type: `BN` (BatchNorm) or `GN` (GroupNorm) |
-| `--pix` | Input image size (32 for CIFAR, 224 for ImageNet) |
-
-### Training Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--epoch` | Total communication rounds |
-| `--E` | Local epochs per client |
-| `--batch_size` | Client batch size |
-| `--K` | Maximum local steps per round (overrides E if smaller) |
-| `--p` | Parallelism factor for client updates |
-
-### LoRA Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--lora` | Enable LoRA fine-tuning (1=True, 0=False) |
-| `--r` | LoRA rank |
-| `--lora_alpha` | LoRA scaling parameter |
-
-### Optimization Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--beta1` | Adam optimizer β1 parameter |
-| `--beta2` | Adam optimizer β2 parameter |
-| `--rho` | SAM optimizer perturbation radius |
-| `--optimizer` | Base optimizer: `SGD` or `AdamW` |
-
-### System Parameters
-| Parameter | Description |
-|-----------|-------------|
-| `--gpu` | GPU device IDs (e.g., "0,1,2") |
-| `--num_gpus_per` | GPU fraction per client (0.2=20% of a GPU) |
-| `--print` | Print detailed logs (1=True, 0=False) |
-| `--preprint` | Evaluation frequency (in epochs) |
+| Argument         | Description                                                | Default     |
+| ---------------- | ---------------------------------------------------------- | ----------- |
+| `--alg`          | Federated algorithm (`FedMuon`, `FedAvg`, `FedAdam`, etc.) | `FedAvg`    |
+| `--data_name`    | Dataset name (`MNIST`, `EMNIST`, `CIFAR10`, `CIFAR100`)    | `MNIST`     |
+| `--model`        | Model architecture (`lenet5`, `resnet10`, `resnet18`)      | `lenet5`    |
+| `--num_workers`  | Number of simulated clients                                | `100`       |
+| `--selection`    | Fraction of clients selected per round                     | `0.1`       |
+| `--E`            | Local epochs per client                                    | `1`         |
+| `--batch_size`   | Local batch size                                           | `50`        |
+| `--lr`           | Learning rate                                              | `0.1`       |
+| `--lr_decay`     | Learning rate decay factor                                 | `1.0`       |
+| `--alpha_value`  | Dirichlet parameter controlling non-IID degree             | `0.6`       |
+| `--gpu`          | GPU index(es)                                              | `'0'`       |
+| `--extname`      | Extra name tag for output                                  | `'default'` |
+| `--check`        | Resume training from checkpoint                            | `0`         |
+| `--num_gpus_per` | GPU fraction allocated to each Ray worker                  | `1.0`       |
 
 ---
 
-## Output Files
+## 🧠 Algorithm Highlights
 
-- **Logs**: `./log/alg-dataset-lr-workers-batch-epochs-lr_decay.txt`
-- **Checkpoints**: `./checkpoint/ckpt-alg-lr-extname-alpha_value-timestamp/`
-- **Plots**: `./plot/alg-dataset-...-timestamp.npy` (contains accuracy/loss arrays)
-- **Models**: `./model/model-alg-...-timestamp.pth`
+### 1. **Matrix Orthogonalization Layer**
 
----
+Local client updates are decomposed and orthogonalized using matrix operations, ensuring that aggregated updates capture **independent learning directions** across clients.
 
-## Notes
+### 2. **Server Momentum Aggregation**
 
-1. **LoRA Usage**: When `--lora 1`, only LoRA parameters are trainable by default
-2. **Pretrained Models**: Automatically downloads required pretrained weights
-3. **Data Splitting**: Uses Dirichlet distribution for non-IID splits when `--alpha_value < 1`
-4. **Memory**: Adjust `--num_gpus_per` based on your GPU memory capacity
+The central server maintains a **momentum term** over aggregated gradients, smoothing oscillations and promoting faster convergence.
 
-For transformer training with GLUE tasks, use `new_llm.py` with appropriate `--data_name` (QQP, MNLI, SST2, etc.).
+### 3. **Ray-Based Simulation**
 
-
-# 🌌 **联邦学习实验平台 · 中文文档**  
-*（支持 CNN & Transformer 双栈训练）*
+Clients (`DataWorker`) and the server (`ParameterServer`) are implemented as **Ray remote actors**, allowing parallel training and realistic communication simulation even on a single machine.
 
 ---
 
-## 📂 一键安装依赖
-```bash
-# 基础环境
-pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
+## 📊 Logging and Checkpoints
 
-# 联邦学习 & 日志
-pip install ray==1.0.0 tensorboardX==2.6.2.2 tqdm==4.67.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
+* Logs are automatically written to the `./log/` directory.
+* Checkpoints are saved to:
 
-# Transformer & 数据集
-pip install transformers==4.46.3 datasets==3.1.0 peft==0.13.2 -i https://pypi.tuna.tsinghua.edu.cn/simple
+  ```
+  ./checkpoint/ckpt-{alg}-{lr}-{dataset}-{alpha_value}.pt
+  ```
+* Training curves (accuracy, loss) are stored in `.npy` format in the `./plot/` directory.
+* TensorBoard logs can be visualized with:
 
-# 科学计算
-pip install scikit-learn==1.3.2 scipy==1.9.3 matplotlib==3.7.5 -i https://pypi.tuna.tsinghua.edu.cn/simple
+  ```bash
+  tensorboard --logdir runs
+  ```
+
+---
+
+## 🔬 Reproducibility Tips
+
+1. The script automatically sets fixed random seeds for Python, NumPy, and PyTorch (`seed=42`).
+2. Keep `alpha_value` and `selection` consistent for fair comparisons.
+3. Repeat experiments 3–5 times and report average ± std accuracy.
+4. Use consistent hardware (single GPU or same Ray configuration).
+
+---
+
+## 📘 Citation
+
+If you find this code useful for your research, please cite:
+
+```bibtex
+@inproceedings{fedmuon2025,
+  title={FedMuon: Accelerating Federated Learning with Matrix Orthogonalization},
+  author={Your Name and Coauthors},
+  booktitle={Proceedings of ...},
+  year={2025}
+}
 ```
 
 ---
 
-## 🎯 **CNN 训练示例（CIFAR-100）**
-### 1. Swin-Tiny 联邦训练
-```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.01 \
-  --epoch 101 \
-  --extname Swin_CIFAR100 \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN swin_tiny \
-  --E 5 \
-  --batch_size 16 \
-  --gpu 2 \
-  --p 1 \
-  --num_gpus_per 0.2 \
-  --normalization BN \
-  --selection 0.05 \
-  --pre 1 \
-  --num_workers 100 \
-  --K 50
-```
-
-### 2. ResNet-18 联邦训练
-```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.001 \
-  --epoch 301 \
-  --extname ResNet18_CIFAR100 \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN resnet18 \
-  --E 5 \
-  --batch_size 50 \
-  --gpu 1 \
-  --pix 32 \
-  --lora 0 \
-  --K 50
-```
-
----
-
-## 🤖 **大语言模型训练示例（RoBERTa-base + GLUE-SST2）**
-```bash
-python new_llm.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name sst2 \
-  --alpha_value 0.8 \
-  --alpha 0.9 \
-  --epoch 101 \
-  --extname RoBERTa_SST2 \
-  --lr_decay 2 \
-  --gamma 0.9 \
-  --CNN roberta_base \
-  --E 10 \
-  --batch_size 32 \
-  --gpu 0 \
-  --p 1 \
-  --num_gpus_per 0.25 \
-  --selection 0.2 \
-  --pre 1 \
-  --num_workers 20 \
-  --preprint 5 \
-  --K 50 \
-  --freeze 1 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --r 16 \
-  --lora 1 \
-  --print 1
-```
-
----
-
-## 🎛️ **参数速查表（中文）**
-
-| 参数 | 说明 | 推荐值 |
-|------|------|--------|
-| `--alg` | 联邦算法 | `FedAdamW`（Adam优化） / `FedAvg`（SGD优化） |
-| `--lr` | 客户端学习率 | `3e-4`（Adam） / `0.1`（SGD） |
-| `--data_name` | 数据集 | `CIFAR100` / `sst2` / `qnli` |
-| `--alpha_value` | 数据异构度 | `1.0`（IID） / `0.1`（高度非IID） |
-| `--CNN` | 模型架构 | `swin_tiny` / `resnet18` / `roberta_base` |
-| `--lora` | LoRA微调 | `1`（启用）→显存占用降低90% |
-| `--r` | LoRA秩 | `16`（平衡性能与效率） |
-| `--gpu` | GPU设备 | `"0"`（单卡） / `"0,1,2"`（多卡） |
-| `--epoch` | 通信轮数 | `100`（CNN） / `50`（大模型） |
-| `--E` | 本地轮数 | `5`（CNN） / `10`（大模型） |
-| `--K` | 本地步数上限 | 覆盖`--E`的步数限制 |
-| `--selection` | 每轮参与比例 | `0.1`（10%客户端） |
-| `--batch_size` | 本地批次大小 | `16`（GPU显存紧张时） |
-
----
-
-## 📊 **输出文件结构**
-```
-实验结果/
-├── log/              # 训练日志（txt）
-├── plot/             # 训练曲线（npy）
-├── model/            # 最终权重（pth）
-└── checkpoint/       # 断点续训（ckpt）
-```
-
----
-
-## 💡 **实用技巧**
-1. **显存优化**：  
-   - CNN训练：`--batch_size 16` + `--num_gpus_per 0.2`  
-   - 大模型：`--lora 1` + `--r 8`（显存占用 < 4GB）
-
-2. **数据异构可视化**：  
-   修改`--alpha_value`（0.1~1.0）观察精度变化曲线
-
-3. **快速验证**：  
-   添加`--print 1`实时查看loss，减少`--epoch`至`20`
-
----
-
-## 🌈 **支持的完整任务列表**
-
-| 任务类型 | 数据集 | 模型 | 示例命令 |
-|----------|--------|------|----------|
-| **图像分类** | CIFAR-10/100 | ResNet/Swin/DeiT | 见上方CNN示例 |
-| **文本分类** | SST-2（情感分析） | RoBERTa-base | 见上方LLM示例 |
-| **自然语言推理** | QNLI/MNLI | RoBERTa-base | 替换`--data_name qnli` |
-| **句子对匹配** | MRPC/QQP | RoBERTa-base | 替换`--data_name mrpc` |
-
----
-
-**🎉 祝实验顺利！有任何问题欢迎提Issue交流~**
+Would you like me to generate and attach this as a downloadable `README.md` file (UTF-8 encoded) with formatting preserved and example commands aligned?
