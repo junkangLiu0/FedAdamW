@@ -7,69 +7,28 @@ This repository contains two main federated learning scripts: `new_adamw.py` (fo
 ---
 
 ## Quick Start
+## Requirements
 
-### 1. CNN Training (CIFAR-100)
+* Python 3.8
+* PyTorch
+* torchvision
+* numpy
+* matplotlib
+* tensorboardX
+* ray==1.0.0
+* filelock
+
+You can install the dependencies with:
+
 ```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.01 \
-  --epoch 101 \
-  --extname FedAvg_adamw_P \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN swin_tiny \
-  --E 5 \
-  --batch_size 16 \
-  --gpu 2 \
-  --p 1 \
-  --num_gpus_per 0.2 \
-  --normalization BN \
-  --selection 0.05 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --rho 0.01 \
-  --pix 224 \
-  --lora 0 \
-  --K 50
+pip install -r requirements.txt
 ```
 
 ### 2. CNN Training (ResNet-18)
 ```bash
-python new_adamw.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.001 \
-  --epoch 301 \
-  --extname FedAvg_adamw_P \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN resnet18 \
-  --E 5 \
-  --batch_size 50 \
-  --gpu 1 \
-  --p 1 \
-  --num_gpus_per 0.1 \
-  --normalization BN \
-  --selection 0.1 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
-  --rho 0.01 \
-  --pix 32 \
-  --lora 0 \
-  --K 50
+python  main_FedAdamW.py --alg FedLADA --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 2 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedAdamW.py --alg FedAdamW --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 2 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
 ```
 
 ### 3. Vision Transformer Training
@@ -346,3 +305,4 @@ python new_llm.py \
 ---
 
 **🎉 祝实验顺利！有任何问题欢迎提Issue交流~**
+
