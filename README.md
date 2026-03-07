@@ -3,7 +3,14 @@
 # Federated Learning Framework README
 
 This repository contains two main federated learning scripts: `main_FedAdamW.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
- 有代码问题+vx15653218567 马上回复！
+
+* 有代码问题+vx15653218567 马上回复！
+
+* 一张4090或者两张2080ti即可训练！！发顶会！！代码问题或者讨论+vx 15653218567
+
+* 我的其他论文也都是这一套代码配置，均可复现！
+
+* 个人主页：https://junkangliu0.github.io/
 ---
 
 ## Quick Start
