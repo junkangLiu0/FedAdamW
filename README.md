@@ -33,20 +33,20 @@ python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alp
 
 ### 3. Vision Transformer Training
 ```bash
-python new_adamw.py \
+python main_FedAdamW.py \
   --alg FedAdamW \
   --lr 3e-4 \
   --data_name CIFAR100 \
   --alpha_value 0.1 \
   --alpha 0.001 \
   --epoch 301 \
-  --extname FedAvg_adamw_P \
+  --extname FedAvg_adamw \
   --lr_decay 2 \
   --gamma 0.5 \
   --CNN deit_tiny \
   --E 5 \
   --batch_size 50 \
-  --gpu 2 \
+  --gpu 0 \
   --p 1 \
   --num_gpus_per 0.1 \
   --normalization BN \
