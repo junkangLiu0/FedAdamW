@@ -40,7 +40,7 @@ python new_adamw.py \
   --alpha_value 0.1 \
   --alpha 0.001 \
   --epoch 301 \
-  --extname FedAvg_adamw_P \
+  --extname FedAvg_adamw \
   --lr_decay 2 \
   --gamma 0.5 \
   --CNN deit_tiny \
@@ -55,8 +55,6 @@ python new_adamw.py \
   --pre 1 \
   --num_workers 100 \
   --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
   --rho 0.01 \
   --pix 32 \
   --lora 0 \
