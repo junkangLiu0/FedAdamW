@@ -1,16 +1,9 @@
 
-# FedAdamW
+# FedAdamW: A Communication-Efficient Optimizer with Convergence and Generalization Guarantees for Federated Large Models 被AAAI 2026录用！！！
 # Federated Learning Framework README
 
-This repository contains two main federated learning scripts: `main_FedAdamW.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
+This repository contains two main federated learning scripts: `new_adamw.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
 
-* 有代码问题+vx15653218567 马上回复！帮忙引用论文一下就行！
-
-* 一张4090或者两张2080ti即可训练！！发顶会！！代码问题或者讨论+vx 15653218567
-
-* 我的其他论文也都是这一套代码配置，均可复现！差分隐私，联邦泛化，联邦大模型，联邦优化，联邦大模型微调lora。。。。
-
-* 个人主页：https://junkangliu0.github.io/
 ---
 
 ## Quick Start
@@ -33,14 +26,23 @@ pip install -r requirements.txt
 
 ### 2. CNN Training (ResNet-18)
 ```bash
-python  main_FedAdamW.py --alg FedLADA --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedAdamW --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
-python  main_FedAdamW.py --alg FedAdamW --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedAdamW --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
-python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedAdamW --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedAdamW.py --alg FedLADA --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedAdamW.py --alg FedAdamW --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
+python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 301  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   resnet18 --E 5 --batch_size 50   --gpu 0 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10  --rho 0.01 --pix 32 --lora 0 --K 50
 ```
 
+* 这里解释一下 --num_gpus_per 0.1的意思是如果你用的是4090显卡24g显存，那么你每个客户端将分配0.1张显卡，即2.4g显存。
+* --lr_decay 2 解释一下，这个是余弦学习率下降
+* --gpu 0 是指使用的是第0块gpu（gpu序号）
+* --alpha_value 0.1 是迪利克雷非立同分布常数
+* --alpha_value 1 这个时候是iid情况
+* --lora 0 是否使用lora微调，从头训练的情况下，不用lora微调 选0就行
+* --normalization BN resnet的归一化层，我选的是BN层，这个效果更好，选择GN也行，收敛的慢
+* --data_name timy imagenet数据集需要自己下载，网址在下面
+  
 ### 3. Vision Transformer Training
 ```bash
-python main_FedAdamW.py \
+python new_adamw.py \
   --alg FedAdamW \
   --lr 3e-4 \
   --data_name CIFAR100 \
@@ -53,7 +55,7 @@ python main_FedAdamW.py \
   --CNN deit_tiny \
   --E 5 \
   --batch_size 50 \
-  --gpu 0 \
+  --gpu 2 \
   --p 1 \
   --num_gpus_per 0.1 \
   --normalization BN \
@@ -62,8 +64,6 @@ python main_FedAdamW.py \
   --pre 1 \
   --num_workers 100 \
   --preprint 10 \
-  --beta1 0.9 \
-  --beta2 0.999 \
   --rho 0.01 \
   --pix 32 \
   --lora 0 \
@@ -71,6 +71,77 @@ python main_FedAdamW.py \
 ```
 
 ---
+## 联邦大模型微调 vit
+
+
+```bash
+python  main_FedAdamW.py --alg FedAdamW --lr 1e-3 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 101  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   VIT-B --E 5 --batch_size 16   --gpu 0 --p 1 --num_gpus_per 0.2 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 50 --preprint 10  --rho 0.01 --pix 224 --lora 1 --K 50
+python  main_FedAdamW.py --alg FedAvg_adamw --lr 1e-3 --data_name CIFAR100 --alpha_value 0.1 --alpha  10  --epoch 101  --extname FedMuon --lr_decay 2 --gamma 0.85  --CNN   VIT-B --E 5 --batch_size 16   --gpu 0 --p 1 --num_gpus_per 0.2 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 50 --preprint 10  --rho 0.01 --pix 224 --lora 1 --K 50
+```
+
+* --lora 1 使用lora微调
+* --batch_size 16 显存限制原因，16效果还可以
+* --num_gpus_per 0.2 五个客户端，每个客户端使用0.2张卡
+* --lr 1e-3 这个学习率微调lora最好
+
+下载模型权重网址：
+下载下来的权重直接放主文件夹下面就行，你也可以自己该目类
+
+vit-base：
+https://huggingface.co/Junkang2/vit/tree/main
+
+swin_transformer 
+https://huggingface.co/Junkang2/swin_transformer/tree/main
+
+## Dataset
+
+数据集下载网址
+
+Tiny-ImageNet：
+https://huggingface.co/datasets/Junkang2/Tiny-ImageNet/upload/main
+
+The code supports multiple datasets:
+
+* **CIFAR-10 / CIFAR-100**
+* **Tiny-ImageNet**
+
+## 🤖 **大语言模型训练示例（RoBERTa-base + GLUE-SST2）**
+```bash
+python new_llm.py \
+  --alg FedAdamW \
+  --lr 2e-4 \
+  --data_name sst2 \
+  --alpha_value 0.8 \
+  --alpha 0.9 \
+  --epoch 101 \
+  --extname RoBERTa_SST2 \
+  --lr_decay 2 \
+  --gamma 0.9 \
+  --CNN roberta_base \
+  --E 10 \
+  --batch_size 16 \
+  --gpu 0 \
+  --p 1 \
+  --num_gpus_per 0.25 \
+  --selection 0.2 \
+  --pre 1 \
+  --num_workers 20 \
+  --preprint 5 \
+  --K 50 \
+  --freeze 1 \
+  --r 16 \
+  --lora 1 \
+  --print 1
+```
+数据集和模型权重下载地址：
+* RoBERTa_base模型权重下载地址，下载完之后放入 roberta_base 文件夹即可。
+https://huggingface.co/FacebookAI/roberta-base/tree/main
+
+* 数据集下载地址在hugging face上
+  sst2 https://huggingface.co/datasets/SetFit/sst2/tree/main
+ 全部数据集下载地址：
+https://huggingface.co/datasets/Junkang2/glue/tree/main
+
 
 ## Parameter Reference
 
@@ -177,7 +248,7 @@ pip install scikit-learn==1.3.2 scipy==1.9.3 matplotlib==3.7.5 -i https://pypi.t
 ## 🎯 **CNN 训练示例（CIFAR-100）**
 ### 1. Swin-Tiny 联邦训练
 ```bash
-python main_FedAdamW.py \
+python new_adamw.py \
   --alg FedAdamW \
   --lr 3e-4 \
   --data_name CIFAR100 \
@@ -190,7 +261,7 @@ python main_FedAdamW.py \
   --CNN swin_tiny \
   --E 5 \
   --batch_size 16 \
-  --gpu 0 \
+  --gpu 2 \
   --p 1 \
   --num_gpus_per 0.2 \
   --normalization BN \
@@ -202,7 +273,7 @@ python main_FedAdamW.py \
 
 ### 2. ResNet-18 联邦训练
 ```bash
-python main_FedAdamW.py \
+python new_adamw.py \
   --alg FedAdamW \
   --lr 3e-4 \
   --data_name CIFAR100 \
@@ -247,8 +318,6 @@ python new_llm.py \
   --preprint 5 \
   --K 50 \
   --freeze 1 \
-  --beta1 0.9 \
-  --beta2 0.999 \
   --r 16 \
   --lora 1 \
   --print 1
@@ -312,6 +381,4 @@ python new_llm.py \
 ---
 
 **🎉 祝实验顺利！有任何问题欢迎提Issue交流~**
-
-
 
