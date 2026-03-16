@@ -4,6 +4,15 @@
 
 This repository contains two main federated learning scripts: `new_adamw.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
 
+
+* 有代码问题 +vx 15653218567 马上回复！帮忙引用论文一下就行！
+
+* 一张4090或者两张2080ti即可训练！！发顶会！！代码问题或者讨论+vx 15653218567
+
+* 我的其他论文也都是这一套代码配置，均可复现！差分隐私，联邦泛化，联邦大模型，联邦优化，联邦大模型微调lora
+
+* 个人主页：https://junkangliu0.github.io/
+
 ---
 
 ## Quick Start
