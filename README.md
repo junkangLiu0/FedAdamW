@@ -51,7 +51,7 @@ python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alp
   
 ### 3. Vision Transformer Training
 ```bash
-python new_adamw.py \
+python main_FedAdamW.py \
   --alg FedAdamW \
   --lr 3e-4 \
   --data_name CIFAR100 \
