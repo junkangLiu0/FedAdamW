@@ -27,7 +27,32 @@ This repository contains two main federated learning scripts: `new_adamw.py` (fo
 * ray==1.0.0
 * filelock
 
-You can install the dependencies with:
+
+## Installation
+
+```bash
+conda create -n fedmuon python=3.8 -y
+conda activate fedmuon
+
+pip install torch torchvision
+pip install numpy matplotlib filelock tensorboardX ray==1.0.0
+pip install peft transformers
+```
+
+Recommended package versions used by the original implementation:
+
+```text
+python >= 3.8
+torch >= 2.0
+torchvision >= 0.15
+ray == 1.0.0
+tensorboardX == 2.6.2.2
+peft == 0.13.2
+transformers == 4.46.3
+```
+
+---
+
 
 ```bash
 pip install -r requirements.txt
@@ -51,33 +76,9 @@ python  main_FedAdamW.py --alg FedAvg_adamw --lr 3e-4 --data_name CIFAR100 --alp
   
 ### 3. Vision Transformer Training
 ```bash
-python main_FedAdamW.py \
-  --alg FedAdamW \
-  --lr 3e-4 \
-  --data_name CIFAR100 \
-  --alpha_value 0.1 \
-  --alpha 0.001 \
-  --epoch 301 \
-  --extname FedAvg_adamw \
-  --lr_decay 2 \
-  --gamma 0.5 \
-  --CNN deit_tiny \
-  --E 5 \
-  --batch_size 50 \
-  --gpu 2 \
-  --p 1 \
-  --num_gpus_per 0.1 \
-  --normalization BN \
-  --selection 0.1 \
-  --print 0 \
-  --pre 1 \
-  --num_workers 100 \
-  --preprint 10 \
-  --rho 0.01 \
-  --pix 32 \
-  --lora 0 \
-  --K 50
+python main_FedAdamW.py --alg FedAdamW --lr 3e-4 --data_name CIFAR100 --alpha_value 0.1 --alpha 0.001 --epoch 301 --extname FedAvg_adamw --lr_decay 2 --gamma 0.5 --CNN deit_tiny --E 5 --batch_size 50 --gpu 2 --p 1 --num_gpus_per 0.1 --normalization BN --selection 0.1 --print 0 --pre 1 --num_workers 100 --preprint 10 --rho 0.01 --pix 32 --lora 0 --K 50
 ```
+
 
 ---
 ## 联邦大模型微调 vit
@@ -116,32 +117,9 @@ The code supports multiple datasets:
 
 ## 🤖 **大语言模型训练示例（RoBERTa-base + GLUE-SST2）**
 ```bash
-python new_llm.py \
-  --alg FedAdamW \
-  --lr 2e-4 \
-  --data_name sst2 \
-  --alpha_value 0.8 \
-  --alpha 0.9 \
-  --epoch 101 \
-  --extname RoBERTa_SST2 \
-  --lr_decay 2 \
-  --gamma 0.9 \
-  --CNN roberta_base \
-  --E 10 \
-  --batch_size 16 \
-  --gpu 0 \
-  --p 1 \
-  --num_gpus_per 0.25 \
-  --selection 0.2 \
-  --pre 1 \
-  --num_workers 20 \
-  --preprint 5 \
-  --K 50 \
-  --freeze 1 \
-  --r 16 \
-  --lora 1 \
-  --print 1
+python new_llm.py --alg FedAdamW --lr 2e-4 --data_name sst2 --alpha_value 0.8 --alpha 0.9 --epoch 101 --extname RoBERTa_SST2 --lr_decay 2 --gamma 0.9 --CNN roberta_base --E 10 --batch_size 16 --gpu 0 --p 1 --num_gpus_per 0.25 --selection 0.2 --pre 1 --num_workers 20 --preprint 5 --K 50 --freeze 1 --r 16 --lora 1 --print 1
 ```
+
 数据集和模型权重下载地址：
 * RoBERTa_base模型权重下载地址，下载完之后放入 roberta_base 文件夹即可。
 https://huggingface.co/FacebookAI/roberta-base/tree/main
