@@ -1,9 +1,26 @@
 
 # FedAdamW: A Communication-Efficient Optimizer with Convergence and Generalization Guarantees for Federated Large Models 被AAAI 2026录用！！！
-# Federated Learning Framework README
 
-This repository contains two main federated learning scripts: `new_adamw.py` (for CNN-based models) and `new_llm.py` (for transformer-based models). Below is a comprehensive guide for running experiments and understanding all parameters.
 
+<div align="center">
+
+### A Communication-Efficient AdamW Optimizer for Federated Large Models
+
+**Mitigating client drift and stabilizing adaptive optimization for federated Transformer training**
+
+<br>
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)]()
+[![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-ee4c2c.svg)]()
+[![FedAdamW](https://img.shields.io/badge/Method-FedAdamW-7b61ff.svg)]()
+[![Vision](https://img.shields.io/badge/Vision-ViT%20%7C%20Swin-orange.svg)]()
+[![Language](https://img.shields.io/badge/Language-RoBERTa%20%7C%20GLUE-brightgreen.svg)]()
+
+<br>
+
+*Federated Learning · Adaptive Optimization · Non-IID Generalization · Large Model Fine-Tuning*
+
+</div>
 
 * 有代码问题 +vx 15653218567 马上回复！帮忙引用论文一下就行！
 
