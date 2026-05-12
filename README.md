@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### A Communication-Efficient AdamW Optimizer for Federated Large Models
+# A Communication-Efficient AdamW Optimizer for Federated Large Models
 
 **Mitigating client drift and stabilizing adaptive optimization for federated Transformer training**
 
